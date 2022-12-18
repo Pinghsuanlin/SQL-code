@@ -34,6 +34,28 @@ INSERT INTO city VALUES ('Hangzhou', 'Zhejiang', 'China');
 INSERT INTO city VALUES ('Rennes', 'Illes-et-Villaine', 'France');
 INSERT INTO city (city, country) VALUES ('Paris', 'France');
 
+--select top 5 rows from city table
+SELECT TOP 5 *
+FROM city
+
+--select the distinct value
+SELECT DISTINCT(city)
+FROM city
+
+--count all non-null value in the column 
+--AS give it a column name
+SELECT COUNT(compName) AS compNameCount
+FROM company
+
+--basic calculation
+SELECT MAX(yeartoCEO) --MIN, AVG
+FROM CEO
+
+--if we switch to master databases, we need to specify the path
+SELECT *
+FROM SQLTutorial.dbo.company
+
+
 
 /*What is the first name of the CEO of the company headquartered in Paris?*/
 SELECT CEO.firstName FROM CEO, company AS c
