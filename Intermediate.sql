@@ -110,3 +110,58 @@ ON Employee.EmployeeID = EmployeeSalary.EmployeeID
 
 
 /*HAVING*/
+SELECT JobTitle, COUNT(JobTitle)
+FROM SQLTutorial.dbo.Employee
+JOIN SQLTutorial.dbo.EmployeeSalary
+  ON Employee.EmployeeID = EmployeeSalary.EmployeeID 
+--aggregate first before we add the condition. 
+GROUP BY JobTitle
+HAVING AVG(Salary) >45000 --we cannot use aggregation in WHERE clause
+ORDER BY AVG(Salary)
+
+
+/*Update Delete data
+UPDATE SET is to change existing data, while INSERT VALUES is to insert a new row of value
+DELETE: delete an entire row from the data
+*/
+
+SELECT *
+FROM SQLTutorial.dbo.Employee
+UPDATE SQLTutorial.dbo.Employee
+SET EmployeeID = 1012, Gender = 'Female', Age= 31
+WHERE FirstName = 'Jim' AND LastName = 'Chen' 
+
+--SELECT * --to ensure that you are not removing the wrong data as no where to reverse once done
+DELETE FROM SQLTutorial.dbo.Employee
+WHERE EmployeeID = 1005
+
+
+
+/* Aliasing: Change column name in the script to increase readability*/
+SELECT FirstName + ' ' + LaseName AS FullName--FirstName and LastName values will be joined
+from SQLTutorial.dbo.Employee 
+
+--give alias to table
+SELECT Demo.EmployeeID, Sal.Salary
+FROM SQLTutorial.dbo.Employee AS Demo
+JOIN SQLTutorial.dbo.EmployeeSalary AS Sal
+ON Demo.EmployeeID = Sal.EmployeeID
+
+
+/*
+Partition By: group those row of values into partition and change how the window partition; dont actually change the number of row returned in the output. 
+Group By: reduce the number of rows in output by covering the aggregation of each group
+*/
+
+SELECT FirstName, LastName, Gender, Salary, COUNT(Gender) OVER (PARTITION BY Gender) AS TotalGender
+FROM SQLTutorial..Employee dem
+JOIN SQLTutorial..EmployeeSalary sal
+ON dem.EmployeeID=sal.EmployeeID
+--every rows will return but with a new column as TotalGender with COUNT(Gender) of fixed number for Female and Male
+
+--cf.GROUP BY
+SELECT Gender, COUNT(Gender)
+FROM SQLTutorial..Employee dem
+JOIN SQLTutorial..EmployeeSalary sal
+ON dem.EmployeeID=sal.EmployeeID
+GROUP BY Gender
