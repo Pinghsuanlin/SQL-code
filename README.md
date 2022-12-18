@@ -1,2 +1,7 @@
 # SQL-code
-My past work in Microsoft SQL Server and Postgre environments. Some work is referenced to Alex the Analyst.
+My past work in Microsoft SQL Server and Postgre environments.
+
+The Basics.sql file contains function like CREATE TABLE, INSER INTO+VALUES, SELECT+FROM, WHERE, GROUP BY + ORDER BY.
+
+
+Reference: Alex the Analyst
