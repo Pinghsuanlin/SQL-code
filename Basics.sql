@@ -54,7 +54,47 @@ FROM CEO
 --if we switch to master databases, we need to specify the path
 SELECT *
 FROM SQLTutorial.dbo.company
+ORDER BY compName DESC, foundingYear --order by multiple columns, and only compName is ordered descendingly
 
+--which will be the same as specifying by column number
+SELECT *
+FROM SQLTutorial.dbo.company
+ORDER BY 2 DESC, 5 
+
+/*
+Where Statement: helps limit or specify what kind of data you want to return
+=, <>, <, >, <=, >=, And, Or, Like, Null, Not Null, In
+*/
+SELECT * FROM CEO
+WHERE yeartoCEO >2000 AND birthPlace = 'Shanghai'
+
+--where lastName starts with C
+SELECT * FROM CEO
+WHERE lastName like 'C%'
+--where lastName has C
+SELECT * FROM CEO
+WHERE lastName like '%C%'
+--where firstName end with y and has n in it
+SELECT * FROM CEO
+WHERE firstName like '%n%y'
+
+
+SELECT * FROM CEO
+WHERE lastName IS NULL --return nothing
+SELECT * FROM CEO
+WHERE lastName IS NOT NULL --return everything
+
+--in is like a multiple equal statement
+SELECT * FROM CEO
+WHERE firstName IN ('Tim', 'Andy')
+
+
+/*Group by, Order by*/
+SELECT country, count(country) AS CountCountry
+FROM city
+WHERE city like 'S%'
+GROUP BY country
+ORDER BY CountCountry DESC --default as ASC
 
 
 /*What is the first name of the CEO of the company headquartered in Paris?*/
