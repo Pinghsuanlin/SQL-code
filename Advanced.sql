@@ -64,7 +64,7 @@ from #temp_employee2
 
 
 
-/*String function*/
+/*String function: TRIM, LTRIM, RTRIM, Replace, Substring, UPPER, LOWER*/
 
 --Drop Table EmployeeErrors;
 CREATE TABLE EmployeeErrors (
@@ -95,11 +95,9 @@ FROM EmployeeErrors
 Select EmployeeID, LTRIM(employeeID) as IDLTRIM
 FROM EmployeeErrors 
 
-
 /*Replace*/
 Select LastName, REPLACE(LastName, '- Fired', '') as LastNameFixed--replace the -Fired to empty
 FROM EmployeeErrors
-
 
 /*Substring*/
 Select Substring(err.FirstName,1,3), Substring(dem.FirstName,1,3), Substring(err.LastName,1,3), Substring(dem.LastName,1,3)
@@ -118,4 +116,96 @@ from EmployeeErrors
 
 
 
+/*
+Stored Procedures
+*/
 
+CREATE PROCEDURE Temp_Employee
+AS
+DROP TABLE IF EXISTS #temp_employee
+Create table #temp_employee (
+JobTitle varchar(100),
+EmployeesPerJob int ,
+AvgAge int,
+AvgSalary int
+)
+
+Insert into #temp_employee
+SELECT JobTitle, Count(JobTitle), Avg(Age), AVG(salary)
+FROM SQLTutorial..EmployeeDemographics emp
+JOIN SQLTutorial..EmployeeSalary sal
+	ON emp.EmployeeID = sal.EmployeeID
+group by JobTitle
+
+Select * 
+From #temp_employee
+
+EXEC Temp_Employee --the #temp_employee table will be returned
+
+
+
+/*Modify stored procedure*/
+ALTER PROCEDURE dbo.Temp_Employee
+@JobTitle nvarchar(100)
+AS
+--DROP TABLE IF EXISTS #temp_employee
+Create table #temp_employee (
+JobTitle varchar(100),
+EmployeesPerJob int ,
+AvgAge int,
+AvgSalary int
+)
+
+Insert into #temp_employee
+SELECT JobTitle, Count(JobTitle), AVG(Age), AVG(salary)
+FROM SQLTutorial..Employee emp
+JOIN SQLTutorial..EmployeeSalary sal
+	ON emp.EmployeeID = sal.EmployeeID
+where JobTitle = @JobTitle --- make sure to change this in this script from original above
+--you can put as much parameters as you want
+group by JobTitle
+
+Select * 
+From #temp_employee3
+
+exec Temp_Employee @jobtitle = 'Salesman'
+exec Temp_Employee @jobtitle = 'Accountant'
+
+
+
+
+
+/*
+Subqueries: can use it everywhere, but here will be in the Select, From, and Where Statement
+*/
+Select EmployeeID, JobTitle, Salary
+From EmployeeSalary
+
+-- Subquery in Select
+Select EmployeeID, Salary, (Select AVG(Salary) From EmployeeSalary) as AllAvgSalary
+From EmployeeSalary
+
+-- another way of doing it: with Partition By
+Select EmployeeID, Salary, AVG(Salary) over () as AllAvgSalary
+From EmployeeSalary
+
+-- Why Group By doesn't work
+Select EmployeeID, Salary, AVG(Salary) as AllAvgSalary
+From EmployeeSalary
+Group By EmployeeID, Salary
+order by 1,2
+
+
+-- Subquery in From: like cte or temp table, but subquery is slower so it's not recommended
+Select a.EmployeeID, AllAvgSalary
+From  (Select EmployeeID, Salary, AVG(Salary) over () as AllAvgSalary From EmployeeSalary) a
+Order by a.EmployeeID
+
+
+-- Subquery in Where
+Select EmployeeID, JobTitle, Salary
+From EmployeeSalary
+where EmployeeID in (--create subquery from here
+	Select EmployeeID 
+	From Employee
+	where Age > 30)--but if you want to return age column, you need to join these 2 tables
